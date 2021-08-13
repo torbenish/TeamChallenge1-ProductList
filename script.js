@@ -1093,6 +1093,10 @@ var listaProdutos = [
     }
 ]
 
+function convertToCurrency(value) {
+    return Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL'}).format(value)
+  }
+
 console.log('\n|==========================================.:CATÁLOGO DE PRODUTOS:.==========================================|\n')
 task1();
 task2();
@@ -1104,6 +1108,11 @@ task7();
 task8();
 task9();
 task10();
+task11();
+task12();
+task13();
+task14();
+task15();
 
 // 01. Quantidade total de itens em estoque (somatória das quantidades de todos os produtos)
 
@@ -1162,7 +1171,7 @@ function task5() {
         let produto = listaProdutos[i];
         totalInventario += produto.preco * produto.qtdEstoque;
     }
-    console.log(`5. Valor total do inventário: R$${totalInventario}\n`)
+    console.log(`5. Valor total do inventário: ${convertToCurrency(totalInventario)}\n`)
 }
 
 // 06. Produto mais caro da loja (bem como seu departamento - considere apenas o preço dele)
@@ -1179,7 +1188,7 @@ function task6() {
             nomeProduto = produto.descricao;           
         }
     }
-    console.log(`6. O produto mais caro da loja é ${nomeProduto}, do departamento de ${nomeDepto} e valor de R$${maiorPreco.toFixed(2)}\n`)
+    console.log(`6. O produto mais caro da loja é ${nomeProduto}, do departamento de ${nomeDepto} e valor de ${convertToCurrency(maiorPreco.toFixed(2))}\n`)
 }
 
 // 07. Produto mais barato da loja (bem como seu departamento - considere apenas o preço dele)
@@ -1196,7 +1205,7 @@ function task7() {
             nomeProduto = produto.descricao;           
         }
     }
-    console.log(`7. O produto mais barato da loja é ${nomeProduto}, do departamento de ${nomeDepto} e valor de R$${menorPreco.toFixed(2)}\n`)
+    console.log(`7. O produto mais barato da loja é ${nomeProduto}, do departamento de ${nomeDepto} e valor de ${convertToCurrency(menorPreco.toFixed(2))}\n`)
 }
 
 // 08. Produto de estoque mais valioso (considere o preço multiplicado pela quantidade e também apenas EM ESTOQUE)
@@ -1211,7 +1220,7 @@ function task8() {
             nomeProduto = produto.descricao;
         }
     }
-    console.log(`8. O produto de estoque mais valioso é ${nomeProduto} e valor de R$${maisValioso.toFixed(2)}\n`)
+    console.log(`8. O produto de estoque mais valioso é ${nomeProduto} e valor de ${convertToCurrency(maisValioso.toFixed(2))}\n`)
 }
 
 // 09. Produto em estoque menos valioso (considere o preço multiplicado pela quantidade e também apenas EM ESTOQUE)
@@ -1226,7 +1235,7 @@ function task9() {
             nomeProduto = produto.descricao;
         }
     }
-    console.log(`9. O produto de estoque menos valioso é ${nomeProduto} e valor de R$${menosValioso.toFixed(2)}\n`)
+    console.log(`9. O produto de estoque menos valioso é ${nomeProduto} e valor de ${convertToCurrency(menosValioso.toFixed(2))}\n`)
 }
 
 // 10. Valor do ticket médio dos produtos da empresa (basicamente o valor total do inventário dividido pelo número de itens - considere TODOS os produtos, porém considere apenas 1 exemplar por produto)
@@ -1240,5 +1249,137 @@ function task10() {
         totalItem++;
     }
     let ticketMedio = totalInventario / totalItem;
-    console.log(`10. O valor do ticket médio é: R$${ticketMedio.toFixed(2)}`)
+    console.log(`10. O valor do ticket médio é: ${convertToCurrency(ticketMedio.toFixed(2))}\n`)
+}
+  
+// 11. Somatória de itens por departamento (você deverá retornar um objeto contendo o nome do departamento e o total de itens nele - Novamente considere os produtos “EM ESTOQUE” - e é apenas a somatória da quantidade de itens)
+
+function task11() {
+  
+    let depto = [];
+    item = 1
+    let somaItem = 0
+    for(i in listaProdutos){
+      produto = listaProdutos[i]
+        if(produto.departamento.idDepto == item){
+            somaItem += produto.qtdEstoque
+        }
+        else{
+            depto.push({Departamento: listaProdutos[i-1].departamento.nomeDepto, Itens: somaItem})
+            item++
+            somaItem = produto.qtdEstoque
+        }
+    }
+    depto.push({Departamento: listaProdutos[i-1].departamento.nomeDepto, Itens: somaItem})
+    console.log(`11. Somatória de itens por departamento:`)
+    console.log(depto)
+}
+
+// 12. Valor total do inventário por departamento (similar ao item anterior - considere TODOS os produtos)
+
+function task12() {
+
+  let depto = []
+  item = 1
+  let somaValor = 0
+  for(i in listaProdutos){
+    produto = listaProdutos[i]
+      if(produto.departamento.idDepto == item){
+          somaValor += produto.qtdEstoque * produto.preco
+      }
+      else{
+          depto.push({Departamento: listaProdutos[i-1].departamento.nomeDepto, Total: convertToCurrency(somaValor.toFixed(2))})
+          item++
+          somaValor = produto.qtdEstoque * produto.preco
+      }
+  }
+  depto.push({Departamento: listaProdutos[i-1].departamento.nomeDepto, Total: convertToCurrency(somaValor.toFixed(2))})
+  console.log(`\n12. Valor total do inventário por departamento:`)
+  console.log(depto)
+}
+
+// 13. Ticket médio por departamento (similar ao item anterior, porém retornando uma lista de objetos que contenha o nome do departamento e o seu ticket médio)
+
+function task13() {
+
+  let depto = []
+  item = 1
+  let somaQtd = 0
+  let somaValor = 0
+  for(i in listaProdutos){
+    produto = listaProdutos[i]
+      if(produto.departamento.idDepto == item){
+          somaQtd += produto.qtdEstoque
+          somaValor += produto.qtdEstoque * produto.preco
+      }
+      else{
+          depto.push({Departamento: listaProdutos[i-1].departamento.nomeDepto, TicketMedio: convertToCurrency((somaValor/somaQtd).toFixed(2))})
+          item++
+          somaQtd = produto.qtdEstoque
+          somaValor = produto.qtdEstoque * produto.preco
+      }
+  }
+  depto.push({Departamento: listaProdutos[i-1].departamento.nomeDepto, TicketMédio: convertToCurrency((somaValor/somaQtd).toFixed(2))})
+  console.log(`\n13. Ticket médio por departamento:`)
+  console.log(depto)
+}
+
+// 14. Departamento mais valioso (qual o departamento que tem a maior somatória dos valores dos itens - Considere todos os departamentos)
+
+function task14() {
+  
+  let depto = []
+  item = 1
+  let somaValor = 0
+  let maiorValor = 0
+  let deptoMaior = ''
+  for(i in listaProdutos){
+    produto = listaProdutos[i]
+      if(produto.departamento.idDepto == item){
+          somaValor += produto.qtdEstoque * produto.preco
+      }
+      else{
+          if(maiorValor < somaValor){
+              maiorValor = somaValor
+              deptoMaior =  listaProdutos[i-1].departamento.nomeDepto
+          }
+          item++
+          somaValor = produto.qtdEstoque * produto.preco
+      }
+  }
+  depto.push({Departamento: deptoMaior, Valor: convertToCurrency(maiorValor.toFixed(2))})
+  console.log(`\n14. Departamento mais valioso:`)
+  console.log(depto)
+}
+
+// 15. Departamento menos valioso (similar ao anterior)
+
+function task15() {
+  
+  let depto = []
+  item = 1
+  let somaValor = 0
+  let menorValor = 0
+  for(i in listaProdutos){
+    produto = listaProdutos[i]
+  menorValor += produto.qtdEstoque * produto.preco
+  }
+  let deptoMenor = ''
+  for(i in listaProdutos){
+    produto = listaProdutos[i]
+      if(produto.departamento.idDepto == item){
+          somaValor += produto.qtdEstoque * produto.preco
+      }
+      else{
+          if(menorValor > somaValor){
+              menorValor = somaValor
+              deptoMenor =  listaProdutos[i-1].departamento.nomeDepto
+          }
+          item++
+          somaValor = produto.qtdEstoque * produto.preco
+      }
+  }
+  depto.push({Departamento: deptoMenor, Valor: convertToCurrency(menorValor.toFixed(2))})
+  console.log(`\n15. Departamento menos valioso:`)
+  console.log(depto)
 }
